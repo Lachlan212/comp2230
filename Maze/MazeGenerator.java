@@ -1,3 +1,5 @@
+//  MazeGenerator
+
 package Maze;
 
 public class MazeGenerator{
