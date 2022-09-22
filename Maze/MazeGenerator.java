@@ -9,3 +9,5 @@ public class MazeGenerator{
 
     }
 }
+
+//lachlan's change
