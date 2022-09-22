@@ -5,8 +5,8 @@ package Maze;
 public class MazeGenerator{
     public static void main(String[] args){
         
-        int n = Integer.parseInt(args[0]);
-
+        int[][] maze = new int[Integer.parseInt(args[0])][Integer.parseInt(args[1])];
+        
     }
 }
 
