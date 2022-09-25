@@ -21,8 +21,8 @@ public class MazeGenerator{
 
         // Apply inputs
 
-        maxRow = 5;
-        maxColumn = 5;
+        maxRow = 100;
+        maxColumn = 100;
         
         Node[][] maze = new Node[maxRow][maxColumn];
         for(int i=0; i< maxRow ; i++){
@@ -51,9 +51,9 @@ public class MazeGenerator{
 
         System.out.println("Start: " + start[0] + " " + start[1] + ", Finish: " + finish[0] + " " + finish[1]);
 
-        if(maxColumn < 11 && maxColumn < 11){ // print conditions
+        //if(maxColumn < 11 && maxColumn < 11){ // print conditions
             printMaze(maze, start, finish);
-        }
+        //}
         
 
         // String savedInfo =  maxRow + "," + maxColumn + ":" + (maxColumn * start[0] + start[1] + 1) + ":" + (maxColumn * finish[0] + finish[1] + 1) + ":"; //note starts at node 1 and not node 0
