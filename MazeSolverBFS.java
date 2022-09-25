@@ -26,21 +26,17 @@ public class MazeSolverBFS {
 
         // fetch maze
 
-        String mazedat = readFromFile("maze.dat");
+        String mazedat = readFromFile(args[0]);
         String[] mazeInfo = mazedat.split(":");
         String[] rowColInfo = mazeInfo[0].split(",");
         maxRow = Integer.parseInt(rowColInfo[0]);
         maxColumn = Integer.parseInt(rowColInfo[1]);
-        System.out.println("maxRow = " + maxRow);
-        System.out.println("maxCol = " + maxColumn);
 
         int stepsSolution = 0;
         int stepsSearch = 0;
 
         int startingNode = Integer.parseInt(mazeInfo[1]);
         finishNode = Integer.parseInt(mazeInfo[2]);
-        System.out.println("starting node at start of program: " + Integer.parseInt(mazeInfo[1]));
-        System.out.println("starting node at start of program: " + startingNode);
 
         // 2d array used for visited as it is created and modified in constant time.
         HashMap<Integer, Integer> visited = new HashMap<>(); //<currentNode, previousNode>
@@ -63,8 +59,9 @@ public class MazeSolverBFS {
         
 
         long startTime = System.nanoTime();
-        traverse(visited, startingNode, maze, stepsSearch, queue);
+        stepsSearch = traverse(visited, startingNode, maze, queue);
         String path = getPath(visited, startingNode, finishNode, stepsSolution);
+        stepsSolution = path.split(",").length;
         long endTime = System.nanoTime();
 
         System.out.println(path);
@@ -77,12 +74,6 @@ public class MazeSolverBFS {
 
         System.out.println( "Time taken for search: " + duration + " milliseconds.");
 
-        //printMazeNodes(maze, startingNode, finishNode);
-
-
-        // if(maxColumn < 11 && maxRow < 11){
-        //     //printSolution(pathLL);
-        // }
         printSolution(getPath(visited, startingNode, finishNode, stepsSolution), startingNode);
 
 
@@ -104,24 +95,26 @@ public class MazeSolverBFS {
         printMaze(maze, start, fin);
     }
 
-    private static void traverse(HashMap<Integer, Integer> visited, Integer startingNode, int[][] maze, int count, Queue<Integer> queue){
+    private static int traverse(HashMap<Integer, Integer> visited, Integer startingNode, int[][] maze, Queue<Integer> queue){
+        
         queue.offer(startingNode);
         int current = startingNode;
         int previous = current;
         visited.put(current, previous);
+        int count = 0;
         while(!queue.isEmpty()){
             count++;
             previous = current;
             current = queue.poll();
             ArrayList<Integer> neighbours = getNeighbours(maze, current, visited);
             for(int i=0; i<neighbours.size(); i++){
-                System.out.println("queue 1 = " + queue.toString());
                 if(!visited.containsKey(neighbours.get(i))){
                     queue.add(neighbours.get(i));
                     visited.put(neighbours.get(i), current);
                 }
             }
         }
+        return count;
     }
 
     private static String getPath(HashMap<Integer, Integer> visited, Integer startingNode, Integer targetNode, int count){
@@ -129,8 +122,6 @@ public class MazeSolverBFS {
         int currentNode = targetNode;
         Stack<Integer> stack = new Stack<>();
         stack.add(currentNode);
-        System.out.println("Starting node = " + startingNode);
-        System.out.println("targetNode = " + targetNode);
         while(currentNode != startingNode){
             currentNode = visited.get(currentNode);
             count++;
