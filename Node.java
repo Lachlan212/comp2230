@@ -1,5 +1,3 @@
-package Maze;
-
 public class Node {
 
     private boolean visited;

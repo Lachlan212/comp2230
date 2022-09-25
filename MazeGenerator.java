@@ -1,5 +1,3 @@
-package Maze;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -53,11 +51,24 @@ public class MazeGenerator{
 
         System.out.println("Start: " + start[0] + " " + start[1] + ", Finish: " + finish[0] + " " + finish[1]);
 
-        //if(maxColumn < 11 && maxColumn < 11){ // print conditions
+        if(maxColumn < 11 && maxColumn < 11){ // print conditions
             printMaze(maze, start, finish);
-        //}
+        }
+        
+
+        // String savedInfo =  maxRow + "," + maxColumn + ":" + (maxColumn * start[0] + start[1] + 1) + ":" + (maxColumn * finish[0] + finish[1] + 1) + ":"; //note starts at node 1 and not node 0
+        // String cell_openness_list = "";
+        // for(int i=0; i<maxRow; i++){
+        //     for(int j=0; j<maxColumn; j++){
+        //         cell_openness_list += maze[i][j].getState();
+        //     }
+        // } 
+        // savedInfo += cell_openness_list;
+        // System.out.println(savedInfo);
+
         writeToFile(new mazeState(maze, start, finish, maxRow, maxColumn));
         System.out.println(readFromFile("maze.dat"));
+        
     }
 
     public static void walkthrough(Node[][] maze, int[] startingNode, Stack<int[]> visited){
@@ -95,8 +106,6 @@ public class MazeGenerator{
 
         }
 
-        
-
         //if you reach here, maze complete
 
     }
@@ -122,13 +131,11 @@ public class MazeGenerator{
             BufferedInputStream bis = new BufferedInputStream(fis);
             ObjectInputStream ois = new ObjectInputStream(bis);
             mazeState m = (mazeState)ois.readObject();
-            //System.out.println(m);
             ois.close();
 
             return m.getMazeState();
 
         } catch (IOException e) {
-            // TODO: handle exception
             e.printStackTrace();
         } catch(ClassNotFoundException ex){
             ex.printStackTrace();
@@ -136,9 +143,8 @@ public class MazeGenerator{
         return "";
     }
 
-    
-
     public static void printMaze(Node[][] maze, int[] start, int[] finish){
+        
         // print top bar
         System.out.print("-");
         for(int i = 0; i < maxColumn; i++){
@@ -209,25 +215,25 @@ public class MazeGenerator{
 
         ArrayList<int[]> unvisited = new ArrayList<>();
 
-        if((startingNode[0]+1)<maxRow){ //check right
+        if((startingNode[0]+1)<maxRow){ //check down
             if(!maze[startingNode[0]+1][startingNode[1]].isVisited()){
                 int[] x = {startingNode[0]+1, startingNode[1]};
                 unvisited.add(x);
             }
         }
-        if((startingNode[1]+1)<maxColumn){ //check down
+        if((startingNode[1]+1)<maxColumn){ //check right
             if(!maze[startingNode[0]][startingNode[1]+1].isVisited()){
                 int[] x = {startingNode[0], startingNode[1]+1};
                 unvisited.add(x);
             }
         }
-        if((startingNode[0]-1)>=0){ //check left
+        if((startingNode[0]-1)>=0){ //check up
             if(!maze[startingNode[0]-1][startingNode[1]].isVisited()){
                 int[] x = {startingNode[0]-1, startingNode[1]};
                 unvisited.add(x);
             }
         }
-        if((startingNode[1]-1)>=0){ //check up
+        if((startingNode[1]-1)>=0){ //check left
             if(!maze[startingNode[0]][startingNode[1]-1].isVisited()){
                 int[] x = {startingNode[0], startingNode[1]-1};
                 unvisited.add(x);
