@@ -88,6 +88,7 @@ public class MazeSolverBFS {
         while(currentNode != startingNode){
             count++;
             path += getNumFromNode(currentNode) + ",";
+            currentNode = visited.get(currentNode);
         }
         return path;
     }
