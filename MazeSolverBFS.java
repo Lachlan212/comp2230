@@ -14,8 +14,8 @@ public class MazeSolverBFS {
     
     static int maxRow;
     static int maxColumn;
-    static ArrayList<Integer> startingNode;
-    static ArrayList<Integer> finishNode;
+    static NodeBFS startingNode;
+    static NodeBFS finishNode;
     static int finishNodeNum;
     static int[][] visited;
     static int[] cell_openness_list;
@@ -40,7 +40,7 @@ public class MazeSolverBFS {
         System.out.println("starting node at start of program: " + startingNode);
 
         // 2d array used for visited as it is created and modified in constant time.
-        HashMap<ArrayList<Integer>, ArrayList<Integer>> visited = new HashMap<>(); //<currentNode, previousNode>
+        HashMap<NodeBFS, NodeBFS> visited = new HashMap<>(); //<currentNode, previousNode>
 
         cell_openness_list = new int[maxColumn * maxRow];
         for (int i = 0; i < mazeInfo[3].length(); i++){
@@ -56,7 +56,7 @@ public class MazeSolverBFS {
             }
         }
         //printMaze(maze, startingNode, finishNode);
-        Queue<ArrayList<Integer>> queue = new LinkedList<>();
+        Queue<NodeBFS> queue = new LinkedList<>();
         int stepsSolution = 0; //count for num of steps in solution
         int stepsSearch = 0;
 
@@ -85,7 +85,7 @@ public class MazeSolverBFS {
 
     }
 
-    private static void printMazeNodes(int[][] maze, ArrayList<Integer> start, ArrayList<Integer> fin){
+    private static void printMazeNodes(int[][] maze, NodeBFS start, NodeBFS fin){
         for(int i=0; i<maze.length; i++){
             for(int j=0; j<maze[i].length; j++){
                 System.out.print("[" + i + "," + j + "]");
@@ -101,17 +101,17 @@ public class MazeSolverBFS {
         printMaze(maze, start, fin);
     }
 
-    private static void traverse(HashMap<ArrayList<Integer>, ArrayList<Integer>> visited, ArrayList<Integer> startingNode, int[][] maze, int count, Queue<ArrayList<Integer>> queue){
+    private static void traverse(HashMap<NodeBFS, NodeBFS> visited, NodeBFS startingNode, int[][] maze, int count, Queue<NodeBFS> queue){
         queue.offer(startingNode);
-        ArrayList<Integer> current = startingNode;
-        ArrayList<Integer> previous = current;
+        NodeBFS current = startingNode;
+        NodeBFS previous = current;
         visited.put(current, previous);
         while(!queue.isEmpty()){
             count++;
             previous = current;
             current = queue.poll();
             visited.put(current, previous);
-            ArrayList<ArrayList<Integer>> neighbours = getNeighbours(maze, current, visited);
+            ArrayList<NodeBFS> neighbours = getNeighbours(maze, current, visited);
             printList(neighbours);
             //queue.addAll(neighbours);
             while(!queue.isEmpty()){
@@ -126,10 +126,10 @@ public class MazeSolverBFS {
         }
     }
 
-    private static String getPath(HashMap<ArrayList<Integer>, ArrayList<Integer>> visited, ArrayList<Integer> startingNode, ArrayList<Integer> targetNode, int count){
+    private static String getPath(HashMap<NodeBFS, NodeBFS> visited, NodeBFS startingNode, NodeBFS targetNode, int count){
         String path = "";
-        ArrayList<Integer> currentNode = targetNode;
-        Stack<ArrayList<Integer>> stack = new Stack<>();
+        NodeBFS currentNode = targetNode;
+        Stack<NodeBFS> stack = new Stack<>();
         stack.add(currentNode);
         System.out.println("Starting node = " + startingNode);
         System.out.println("targetNode = " + targetNode);
@@ -147,19 +147,19 @@ public class MazeSolverBFS {
         return path;
     }
 
-    private static void printList(ArrayList<ArrayList<Integer>> list){
+    private static void printList(ArrayList<NodeBFS> list){
         for(int i=0; i<list.size(); i++){
             System.out.print("[" + list.get(i).get(0) + "," + list.get(i).get(1) + "]");
         }
         System.out.println();
     }
 
-    private static ArrayList<ArrayList<Integer>> getNeighbours(int[][] maze, ArrayList<Integer> startingNode, HashMap<ArrayList<Integer>, ArrayList<Integer>> map){
-        ArrayList<ArrayList<Integer>> neighbours = new ArrayList<>();
+    private static ArrayList<NodeBFS> getNeighbours(int[][] maze, NodeBFS startingNode, HashMap<NodeBFS, NodeBFS> map){
+        ArrayList<NodeBFS> neighbours = new ArrayList<>();
         System.out.println("startingNode = [" + startingNode.get(0) + "," + startingNode.get(1) + "]");
         if(maze[startingNode.get(0)][startingNode.get(1)] == 3){ //both open
-            ArrayList<Integer> n1 = new ArrayList<>(); n1.add(startingNode.get(0)+1); n1.add(startingNode.get(1));
-            ArrayList<Integer> n2 = new ArrayList<>(); n2.add(startingNode.get(0)); n2.add(startingNode.get(1)+1);
+            NodeBFS n1 = new NodeBFS(startingNode.get(0)+1, startingNode.get(1));
+            NodeBFS n2 = new NodeBFS(startingNode.get(0), startingNode.get(1)+1);
             //visited check
             if(n1.get(0) < 5 && n1.get(1) < 5){
                 if(!map.containsKey(n1)){
@@ -175,7 +175,7 @@ public class MazeSolverBFS {
         }
         else if(maze[startingNode.get(0)][startingNode.get(1)] == 2){ //down only open
             
-            ArrayList<Integer> n = new ArrayList<>(); n.add(startingNode.get(0)); n.add(startingNode.get(1)+1);
+            NodeBFS n = new NodeBFS(startingNode.get(0), startingNode.get(1)+1);
             if(n.get(0) < 5 && n.get(1) < 5){
                 if(!map.containsKey(n)){
                     neighbours.add(n);
@@ -184,8 +184,8 @@ public class MazeSolverBFS {
             
         }
         else if(maze[startingNode.get(0)][startingNode.get(1)] == 1){ //right only open
-            ArrayList<Integer> n = new ArrayList<>(); n.add(startingNode.get(0)+1); n.add(startingNode.get(1));
-            if(n.get(0) < 5 && n.get(1) < 5){
+            NodeBFS n = new NodeBFS(startingNode.get(0)+1, startingNode.get(1));
+            if(n.get(0) < maxRow && n.get(1) < maxColumn){
                 if(!map.containsKey(n)){
                     neighbours.add(n);
                 }
@@ -194,7 +194,7 @@ public class MazeSolverBFS {
 
         if(startingNode.get(0)-1 >= 0){ //check left
             if((maze[startingNode.get(0)-1][startingNode.get(1)] == 1 || maze[startingNode.get(0)-1][startingNode.get(1)] == 3)){
-                ArrayList<Integer> n = new ArrayList<>(); n.add(startingNode.get(0)-1); n.add(startingNode.get(1));
+                NodeBFS n = new NodeBFS(startingNode.get(0)-1, startingNode.get(1));
                 if(!map.containsKey(n)){
                     neighbours.add(n);
                 }
@@ -203,7 +203,7 @@ public class MazeSolverBFS {
 
         if(startingNode.get(1)-1 >= 0){ //check up
             if((maze[startingNode.get(0)][startingNode.get(1)-1] == 2 || maze[startingNode.get(0)][startingNode.get(1)-1] == 3)){
-                ArrayList<Integer> n = new ArrayList<>(); n.add(startingNode.get(0)); n.add(startingNode.get(1)-1);
+                NodeBFS n = new NodeBFS(startingNode.get(0), startingNode.get(1)-1);
                 //System.out.println("right check = " + n[0] + "," + n[1]);
                 if(!map.containsKey(n)){
                     neighbours.add(n);
@@ -216,19 +216,17 @@ public class MazeSolverBFS {
 
     // returns the nodes co-ordinate index in the maze using its ID
     // note the ID is not 0 indexed.
-    private static ArrayList<Integer> getNodeFromNum(int num){
+    private static NodeBFS getNodeFromNum(int num){
         int row = (int) (Math.floor(num)-1) / maxRow;
         int col = (num-1) % maxRow; //-1 from this resulted in memory crash
 
-        ArrayList<Integer> node = new ArrayList<>();
-        node.add(row);
-        node.add(col);
+        NodeBFS node = new NodeBFS(row, col);
         return node;
     }
 
     // returns the Nodes ID, where n_0, m_0 = 1, n_0, m_1 = 2,...
     // note it is not 0 indexed.
-    private static int getNumFromNode(ArrayList<Integer> node){
+    private static int getNumFromNode(NodeBFS node){
         return (maxColumn) * node.get(0) + node.get(1) + 1;
     }
 
@@ -266,7 +264,7 @@ public class MazeSolverBFS {
         return "";
     }
 
-    public static void printMaze(int[][] maze, ArrayList<Integer> start, ArrayList<Integer> finish){
+    public static void printMaze(int[][] maze, NodeBFS start, NodeBFS finish){
         
         // print top bar
         System.out.print("-");
