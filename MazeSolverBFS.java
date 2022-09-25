@@ -1,5 +1,3 @@
-
-
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,18 +8,19 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
+//For BFS, a queue was used to load neighbours of the current node into, following the FIFO structure of a Breadth First Search. (seen in traverse())
+//To track the path taken, I implemented a HashMap, holding the current node and it's parent node. This was so that during the getPath() function, which is only accessed
+//once the entire tree has been traversed, with a repeated HashMap.get(currentNode), we can 'backtrack' from the finishNode to the startNode. A HashMap was selected
+//due to its O(1) access times for any variable inside it, so no time would be wasted searching through a List-type structure every time a neighbour is checked. If I
+//had not used a HashMap, the program could have become significantly slower, as most other lists-type structures have a access time of O(n).
+
 public class MazeSolverBFS {
     
     static int maxRow;
     static int maxColumn;
-    //static Integer startingNode;
     static Integer finishNode;
     static int finishNodeNum;
-    static int[][] visited;
     static int[] cell_openness_list;
-    static int stepsCounter;
-    static int stepsSolution = 0; //count for num of steps in solution
-    static int stepsSearch = 0;
 
     public static void main(String[] args){
 
@@ -34,6 +33,9 @@ public class MazeSolverBFS {
         maxColumn = Integer.parseInt(rowColInfo[1]);
         System.out.println("maxRow = " + maxRow);
         System.out.println("maxCol = " + maxColumn);
+
+        int stepsSolution = 0;
+        int stepsSearch = 0;
 
         int startingNode = Integer.parseInt(mazeInfo[1]);
         finishNode = Integer.parseInt(mazeInfo[2]);
@@ -111,11 +113,7 @@ public class MazeSolverBFS {
             count++;
             previous = current;
             current = queue.poll();
-            //current = queue.poll();
-            //visited.put(current, previous);
             ArrayList<Integer> neighbours = getNeighbours(maze, current, visited);
-            printList(neighbours);
-            //queue.addAll(neighbours);
             for(int i=0; i<neighbours.size(); i++){
                 System.out.println("queue 1 = " + queue.toString());
                 if(!visited.containsKey(neighbours.get(i))){
@@ -123,15 +121,6 @@ public class MazeSolverBFS {
                     visited.put(neighbours.get(i), current);
                 }
             }
-            
-            // System.out.println("queue 2 = " + queue.toString());
-            
-            // neighbours.clear();
-            // neighbours = getNeighbours(maze, current, visited);
-            // queue.addAll(neighbours);
-            // System.out.println("queue 3 = " + queue.toString());
-            // printList(neighbours);
-            //System.out.println(queue);
         }
     }
 
@@ -139,20 +128,16 @@ public class MazeSolverBFS {
         String path = "";
         int currentNode = targetNode;
         Stack<Integer> stack = new Stack<>();
-        //TODO: change back to linked list
         stack.add(currentNode);
         System.out.println("Starting node = " + startingNode);
         System.out.println("targetNode = " + targetNode);
         while(currentNode != startingNode){
             currentNode = visited.get(currentNode);
             count++;
-            //path += getNumFromNode(currentNode) + ",";
-            //path += currentNode + ",";
+            
             stack.add(currentNode);
-            //System.out.println(stack);
         }
         while(!stack.isEmpty()){
-            //path += getNumFromNode(stack.pop()) + ",";
             path += stack.pop() + ",";
         }
         return path;
@@ -229,8 +214,8 @@ public class MazeSolverBFS {
     // returns the nodes co-ordinate index in the maze using its ID
     // note the ID is not 0 indexed.
     private static int[] getNodeFromNum(int num){
-        int row = (int) (Math.floor(num)-1) / maxRow;
-        int col = (num-1) % maxRow; //-1 from this resulted in memory crash
+        int row = (int) (Math.floor(num)-1) / maxColumn;
+        int col = (num-1) % maxColumn; 
 
         int[] node = {row, col};
         return node;
