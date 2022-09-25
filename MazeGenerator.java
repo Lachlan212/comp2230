@@ -21,8 +21,8 @@ public class MazeGenerator{
 
         // Apply inputs
 
-        maxRow = 10;
-        maxColumn = 10;
+        maxRow = 5;
+        maxColumn = 5;
         
         Node[][] maze = new Node[maxRow][maxColumn];
         for(int i=0; i< maxRow ; i++){
